@@ -2,7 +2,7 @@
 The main objective of the project is to achieve 3D tracking of moving objects and retrieving the 6DoF of the object motion. 
 
 ## Contributors:
-Islam Ali, PhD Student, Computing Science, University of Alberta.
+Islam Ali, PhD Student, Computing Science, University of Alberta.  
 Junaid Ahmad, MSc Student,  Computing Science, University of Alberta.
 
 ## Disclaimer:
