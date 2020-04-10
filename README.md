@@ -6,5 +6,6 @@ Islam Ali, PhD Student, Computing Science, University of Alberta.
 Junaid Ahmad, MSc Student,  Computing Science, University of Alberta.
 
 ## Disclaimer:
-This project is part of the requirements for the CMPUT615 course at the University of Alberta. 
+This project is part of the requirements for the CMPUT615 course at the University of Alberta.   
+Winter 2020 
 
