@@ -53,29 +53,37 @@ def project_ctrl_pts(m_ctrl_pts, m_k, m_pose_r, m_pose_t):
     pose_r_cos = np.cos(pose_r_radian)
 
     # constructing the rotation matrix
-    rz = [[pose_r_cos(2), -pose_r_sin(2), 0],
-          [pose_r_sin(2), pose_r_cos(2),  0],
+    rz = [[pose_r_cos[2], -pose_r_sin[2], 0],
+          [pose_r_sin[2], pose_r_cos[2],  0],
           [0, 0, 1]]
 
-    ry = [[pose_r_cos(1), 0 , pose_r_sin(1)],
+    ry = [[pose_r_cos[1], 0 , pose_r_sin[1]],
           [0, 1, 0],
-          [-pose_r_sin(1), 0, pose_r_cos(1)]]
+          [-pose_r_sin[1], 0, pose_r_cos[1]]]
 
     rx = [[1, 0, 0],
-          [0, pose_r_cos(0), -pose_r_sin(0)],
-          [0, pose_r_sin(0), pose_r_cos(0)]]
+          [0, pose_r_cos[0], -pose_r_sin[0]],
+          [0, pose_r_sin[0], pose_r_cos[0]]]
 
     rot_mat = np.dot(rz, np.dot(ry, rx))
 
     # construct the extrinsic matrix
     ext_mat = np.concatenate((rot_mat, np.reshape(m_pose_t, (3, 1))), axis=1)
-    hom_ext_mat = np.concatenate((ext_mat, np.asarray([0,0,0,1])), axis=0)
+    last_row = np.reshape([0,0,0,1], (1,4))
+    hom_ext_mat = np.concatenate((ext_mat, last_row), axis=0)
 
     # convert the 3d points to be homogeneous
-    ctrl_pts_3d_hom = np.concatenate((m_ctrl_pts, np.ones(m_ctrl_pts.shape[0], 1)), axis=1)
+    ones_col =  np.ones((np.asarray(m_ctrl_pts).shape[0], 1))
+    ctrl_pts_3d_hom = np.concatenate((m_ctrl_pts,ones_col), axis=1)
 
     # do the projection
     ctrl_pts_2d_hom = np.dot(np.dot(m_k, hom_ext_mat), np.transpose(ctrl_pts_3d_hom))
-    ctrl_pts_2d = np.transpose(ctrl_pts_2d_hom[0:1, :])
+
+    # do the scaling by the 3rd element
+    ctrl_pts_2d_hom[0, :] = np.divide(ctrl_pts_2d_hom[0, :], ctrl_pts_2d_hom[2, :])
+    ctrl_pts_2d_hom[1, :] = np.divide(ctrl_pts_2d_hom[1, :], ctrl_pts_2d_hom[2, :])
+    ctrl_pts_2d_hom[2, :] = np.divide(ctrl_pts_2d_hom[2, :], ctrl_pts_2d_hom[2, :])
+
+    ctrl_pts_2d = np.transpose(ctrl_pts_2d_hom[0:2, :])
 
     return ctrl_pts_2d
