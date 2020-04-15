@@ -9,11 +9,11 @@ import math
 import numpy as np
 def controlLines(cp):
     """RANSAC algorithm for picking up the best lines of an object"""
-    n=10#number of picked at random
+    n=1000#number of points picked at random
     k=0 #Number of iterations
-    t=3 #Thershold for the distance from the lines
+    t=40 #Thershold for the distance from the lines
     lines=np.zeros((20,2))
-    d=10#These values can be tuned
+    d=600#These values can be tuned
     i=0
     while(k==20):
         np.random.shuffle(cp)
@@ -26,7 +26,7 @@ def controlLines(cp):
         lines[i,:]=np.dot(np.linalg.pinv(X),Y).T
         Xt=val[:,[0,2]]
         Yt=val[:,1]
-        dist=(Yt - np.dot(Xt,lines[k,:].T))/math.sqrt(1+(lines[k,1]**2)) 
+        dist=(Yt - np.dot(Xt,lines[i,:].T))/math.sqrt(1+(lines[i,1]**2)) 
         val=val[dist>t]
         if val.shape[0] >= d:
             lines[i,:]=np.dot(np.linalg.pinv(Xt),Yt).T
