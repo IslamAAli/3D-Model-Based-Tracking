@@ -66,3 +66,27 @@ def visualize_3d_lines_pts(m_edges, m_pts_sampled, m_pts_edges):
     ax.scatter3D(m_pts_edges[:, 0], m_pts_edges[:, 1], m_pts_edges[:, 2], s=100, c='green')
 
     plt.show()
+
+def visualize_2d_pts(pts_2d):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.scatter(pts_2d[:, 0], pts_2d[:, 1], marker='o');
+    ax.set_xlim([0, 1024])
+    ax.set_ylim([0, 768])
+    plt.show()
+
+
+def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
+    # Create a black image
+    img = np.ones((768, 1024, 3), np.float)
+    img = img * 255
+    # Draw a diagonal blue line with thickness of 5 px
+
+    for point in pts_2d_edge:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
+
+    for point in pts_2d_ctrl:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+
+    cv.imshow('Object Projection', img)
+    cv.waitKey(0)

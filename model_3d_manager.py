@@ -52,3 +52,32 @@ def rand_rot_trans():
                     random.randrange(config.RAND_TRANS_LIMIT)]
 
     return rotations, translations
+
+def model_edges():
+    ctrl_edges = []
+
+    ctrl_edges.append([1, -2, 3, 1, -2, -3])
+    ctrl_edges.append([1, -2, -3, 1, 2, -3])
+    ctrl_edges.append([1, 2, -3, 1, 2, 3])
+    ctrl_edges.append([1, 2, 3, 1, -2, 3])
+
+    ctrl_edges.append([-1, -2, 3, -1, -2, -3])
+    ctrl_edges.append([-1, -2, -3, -1, 2, -3])
+    ctrl_edges.append([-1, 2, -3, -1, 2, 3])
+    ctrl_edges.append([-1, 2, 3, -1, -2, 3])
+
+    ctrl_edges.append([1, -2, 3, -1, -2, 3])
+    ctrl_edges.append([1, -2, -3, -1, -2, -3])
+    ctrl_edges.append([1, 2, -3, -1, 2, -3])
+    ctrl_edges.append([1, 2, 3, -1, 2, 3])
+
+    return ctrl_edges
+
+def camera_mat_gen():
+    k_mat = [[config.K_FX, 0, config.K_CX, 0],
+             [0, config.K_FY, config.K_CY, 0],
+             [0, 0, 1, 0]]
+
+    k_mat = np.asarray(k_mat)
+
+    return k_mat
