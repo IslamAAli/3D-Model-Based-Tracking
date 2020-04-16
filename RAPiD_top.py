@@ -24,7 +24,7 @@ def main():
     ext_rot     = config.EXT_R
     ext_trans   = config.EXT_T
 
-    ctrl_pts_3d, edge_pts_3d = ctrl_pts_manager.sample_edges(ctrl_edges, config.CTRL_PTS_PER_EDGE)
+    ctrl_pts_3d, edge_pts_3d, ctrl_pts_tags = ctrl_pts_manager.sample_edges(ctrl_edges, config.CTRL_PTS_PER_EDGE)
     edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, proj_rot, proj_trans)
     ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, proj_rot, proj_trans)
 

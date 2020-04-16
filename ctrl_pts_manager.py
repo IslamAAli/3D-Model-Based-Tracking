@@ -8,7 +8,9 @@ import visual_debug
 def sample_edges(m_edges, m_pts_per_edge):
     ctrl_pts_3d         = []
     ctrl_edge_pts_3d    = []
+    ctrl_pts_tags       = []
 
+    edge_id = 0
     for edge in m_edges:
         # extract end points
         edge_start  = edge[0:3]
@@ -25,10 +27,14 @@ def sample_edges(m_edges, m_pts_per_edge):
         for i in range(config.CTRL_PTS_PER_EDGE):
             sampled_ctrl_pt = np.add(sampled_ctrl_pt, increment_3d)
             ctrl_pts_3d.append(sampled_ctrl_pt)
+            ctrl_pts_tags.append(edge_id)
+
+        edge_id += 1
 
     # convert to numpy array
     ctrl_pts_3d = np.asarray(ctrl_pts_3d)
     ctrl_edge_pts_3d = np.asarray(ctrl_edge_pts_3d)
+    ctrl_pts_tags = np.asarray(ctrl_pts_tags)
 
     # visualize output for debugging
     # visual_debug.visualize_3d_scatter(ctrl_edge_pts_3d)
@@ -37,7 +43,7 @@ def sample_edges(m_edges, m_pts_per_edge):
     # visualize edges with samples
     visual_debug.visualize_3d_lines_pts(m_edges, ctrl_pts_3d, ctrl_edge_pts_3d)
 
-    return ctrl_pts_3d, ctrl_edge_pts_3d
+    return ctrl_pts_3d, ctrl_edge_pts_3d, ctrl_pts_tags
 
 # ---------------------------------------------------------------------------
 # projecting 3d control points to the 2d image and do simple borders filtering
