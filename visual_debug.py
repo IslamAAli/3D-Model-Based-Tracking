@@ -77,16 +77,36 @@ def visualize_2d_pts(pts_2d):
 
 
 def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
-    # Create a black image
+    # Create a white image
     img = np.ones((768, 1024, 3), np.float)
     img = img * 255
-    # Draw a diagonal blue line with thickness of 5 px
 
+    # img = cv.imread('dataset_eval/0001.png')
+
+    # plot sedge points
     for point in pts_2d_edge:
         cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
 
+    # plot control points
     for point in pts_2d_ctrl:
         cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+
+    # draw edges between edges
+    for i in range(8):
+        if (i + 1)%4 ==0:
+            cv.line(img,    (int(pts_2d_edge[i,0]),int(pts_2d_edge[i,1])),
+                            (int(pts_2d_edge[i-3,0]),int(pts_2d_edge[i-3,1])),
+                            (0,255,0),2)
+        else:
+            cv.line(img,    (int(pts_2d_edge[i, 0]), int(pts_2d_edge[i, 1])),
+                            (int(pts_2d_edge[i+1, 0]), int(pts_2d_edge[i+1, 1])),
+                            (0, 255, 0), 2)
+
+    for i in range(4):
+        cv.line(img, (int(pts_2d_edge[i, 0]), int(pts_2d_edge[i, 1])),
+                (int(pts_2d_edge[i +4, 0]), int(pts_2d_edge[i +4, 1])),
+                (0, 255, 0), 2)
+
 
     cv.imshow('Object Projection', img)
     cv.waitKey(0)

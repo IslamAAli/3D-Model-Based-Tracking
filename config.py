@@ -1,5 +1,6 @@
 # number of points to be sampled on each control edge
 CTRL_PTS_PER_EDGE = 2
+DATASET_SIZE = 800
 
 # intrinsic camera matrix parameters
 K_FX = 1422.2222    # unit: mm

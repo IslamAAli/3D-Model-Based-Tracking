@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 import imutils
 import numpy as np
 
@@ -8,6 +8,7 @@ import ctrl_pts_manager
 import model_3d_manager
 import config
 import visual_debug
+import edge_detection
 
 # -----------------------------------------------------------------------------
 def main():
@@ -27,10 +28,28 @@ def main():
     edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, proj_rot, proj_trans)
     ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, proj_rot, proj_trans)
 
+    # Main loop for RAPiD Tracking
+    for img_no in range(config.DATASET_SIZE):
+        # read new image from the data set
+        path = 'synth_data/'+ (str(img_no+1).zfill(4)+'.png')
+        print('[Info] Processing image at:', path)
+        img_in = cv.imread(path)
+
+        # edge detection for the image
+        sobel_img = edge_detection.detect_edges_sobel(img_in)
+        # cv.imshow('Object Projection', sobel_img)
+        # cv.waitKey(50)
+
+        # extraction of correspondences
+
+        # formulating the least square problem
+
+        # update the object pose (rotation and translation)
+
+        # plot the results
+
+    cv.waitKey(0)
     visual_debug.visualize_3d_pts_img(edge_pts_2d, ctrl_pts_2d)
-
-
-    ## sobel edge detector
 
 if __name__ == "__main__":
     main()
