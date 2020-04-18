@@ -7,6 +7,8 @@ Created on Wed Apr 15 18:52:33 2020
 """
 import math
 import numpy as np
+import cv2 as cv
+
 def controlPointMatching(cp,edges,edge_tags):
     
     kx=1
@@ -47,8 +49,8 @@ def controlPointMatching(cp,edges,edge_tags):
     return matchingPoints
 
 def find_Edge(edges,point,tag):
-    x=point[0]
-    y=point[1]
+    x=int(point[0])
+    y=int(point[1])
     c1=0
     c2=0
     pos=[x,y]

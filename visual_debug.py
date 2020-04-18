@@ -110,3 +110,16 @@ def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
 
     cv.imshow('Object Projection', img)
     cv.waitKey(0)
+
+
+def visualize_2d_pts_img(img, points_1, points_2):
+
+    img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
+    for point in points_1:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
+
+    for point in points_2:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+
+    cv.imshow('Object Projection', img)
+    cv.waitKey(0)

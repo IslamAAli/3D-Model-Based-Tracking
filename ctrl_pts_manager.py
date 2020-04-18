@@ -101,3 +101,16 @@ def projection_mat_gen(m_pose_r, m_pose_t):
     hom_ext_mat = np.concatenate((ext_mat, last_row), axis=0)
 
     return  hom_ext_mat
+
+
+# ---------------------------------------------------------------------------
+def filter_ctrl_pts(src_pts, dst_pts):
+    src_pts_filtered = []
+    dst_pts_filtered = []
+
+    for i in range(dst_pts.shape[0]):
+        if (not (np.isinf(dst_pts[i,0]))) and (dst_pts[i,0]!=0):
+            src_pts_filtered.append(src_pts[i, :])
+            dst_pts_filtered.append(dst_pts[i, :])
+
+    return src_pts_filtered, dst_pts_filtered

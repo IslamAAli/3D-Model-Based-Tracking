@@ -10,6 +10,7 @@ import config
 import visual_debug
 import edge_detection
 import controlPointMatching
+import motion_estimation
 
 # -----------------------------------------------------------------------------
 def main():
@@ -41,17 +42,32 @@ def main():
         # cv.imshow('Object Projection', sobel_img)
         # cv.waitKey(50)
 
+        flipped_ctrl_pts = []
+        for i in range(ctrl_pts_2d.shape[0]):
+            flipped_ctrl_pts.append([ctrl_pts_2d[i,1], ctrl_pts_2d[i,0]])
+
+        flipped_ctrl_pts = np.asarray(flipped_ctrl_pts)
+
         # extraction of correspondences
-        ctrl_pts_2d_matched = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
+        ctrl_pts_2d_matched = controlPointMatching.controlPointMatching(flipped_ctrl_pts, sobel_img, ctrl_pts_tags)
 
         # formulating the least square problem
+        ctrl_pts_src, ctrl_pts_dst = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched)
+
+        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst)
+        cv.waitKey(0)
+
+        print('t')
+        # mat = motion_estimation.motion_estimation_F(ctrl_pts_src, ctrl_pts_dst)
+        # print(mat)
+        # print('===============')
 
         # update the object pose (rotation and translation)
 
         # plot the results
 
     cv.waitKey(0)
-    visual_debug.visualize_3d_pts_img(edge_pts_2d, ctrl_pts_2d)
+
 
 if __name__ == "__main__":
     main()

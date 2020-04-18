@@ -11,7 +11,7 @@ def motion_estimation_E(pts_2d_src, pts_2d_dst):
 # calculate the fundamental matrix
 def motion_estimation_F(pts_2d_src, pts_2d_dst):
     F_mat, inliners = cv.findFundamentalMat(pts_2d_src, pts_2d_dst, method=cv.FM_RANSAC ,
-                                            ransacReprojThreshold= 1, confidence=0.80, maxIters=2000)
+                                            ransacReprojThreshold= 1, confidence=0.80)
     return F_mat
 
 # calculate the homography matrix
