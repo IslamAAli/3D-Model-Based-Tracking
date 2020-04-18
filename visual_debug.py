@@ -66,3 +66,60 @@ def visualize_3d_lines_pts(m_edges, m_pts_sampled, m_pts_edges):
     ax.scatter3D(m_pts_edges[:, 0], m_pts_edges[:, 1], m_pts_edges[:, 2], s=100, c='green')
 
     plt.show()
+
+def visualize_2d_pts(pts_2d):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.scatter(pts_2d[:, 0], pts_2d[:, 1], marker='o');
+    ax.set_xlim([0, 1024])
+    ax.set_ylim([0, 768])
+    plt.show()
+
+
+def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
+    # Create a white image
+    img = np.ones((768, 1024, 3), np.float)
+    img = img * 255
+
+    # img = cv.imread('dataset_eval/0001.png')
+
+    # plot sedge points
+    for point in pts_2d_edge:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
+
+    # plot control points
+    for point in pts_2d_ctrl:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+
+    # draw edges between edges
+    for i in range(8):
+        if (i + 1)%4 ==0:
+            cv.line(img,    (int(pts_2d_edge[i,0]),int(pts_2d_edge[i,1])),
+                            (int(pts_2d_edge[i-3,0]),int(pts_2d_edge[i-3,1])),
+                            (0,255,0),2)
+        else:
+            cv.line(img,    (int(pts_2d_edge[i, 0]), int(pts_2d_edge[i, 1])),
+                            (int(pts_2d_edge[i+1, 0]), int(pts_2d_edge[i+1, 1])),
+                            (0, 255, 0), 2)
+
+    for i in range(4):
+        cv.line(img, (int(pts_2d_edge[i, 0]), int(pts_2d_edge[i, 1])),
+                (int(pts_2d_edge[i +4, 0]), int(pts_2d_edge[i +4, 1])),
+                (0, 255, 0), 2)
+
+
+    cv.imshow('Object Projection', img)
+    cv.waitKey(0)
+
+
+def visualize_2d_pts_img(img, points_1, points_2):
+
+    img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
+    for point in points_1:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
+
+    for point in points_2:
+        cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+
+    cv.imshow('Object Projection', img)
+    cv.waitKey(0)
