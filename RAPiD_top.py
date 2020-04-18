@@ -9,6 +9,7 @@ import model_3d_manager
 import config
 import visual_debug
 import edge_detection
+import controlPointMatching
 
 # -----------------------------------------------------------------------------
 def main():
@@ -41,6 +42,7 @@ def main():
         # cv.waitKey(50)
 
         # extraction of correspondences
+        ctrl_pts_2d_matched = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
 
         # formulating the least square problem
 
