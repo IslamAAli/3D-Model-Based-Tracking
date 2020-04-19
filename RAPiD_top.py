@@ -43,32 +43,22 @@ def main():
         # cv.imshow('Object Projection', sobel_img)
         # cv.waitKey(50)
 
-        flipped_ctrl_pts = []
-        for i in range(ctrl_pts_2d.shape[0]):
-            flipped_ctrl_pts.append([ctrl_pts_2d[i,1], ctrl_pts_2d[i,0]])
-
-        flipped_ctrl_pts = np.asarray(flipped_ctrl_pts)
+        flipped_ctrl_pts = ctrl_pts_manager.flip_pts(ctrl_pts_2d)
 
         # extraction of correspondences
-        ctrl_pts_2d_matched = controlPointMatching.controlPointMatching(flipped_ctrl_pts, sobel_img, ctrl_pts_tags)
+        flipped_matched_ctrl_pts = controlPointMatching.controlPointMatching(flipped_ctrl_pts, sobel_img, ctrl_pts_tags)
+        ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
+
+        # filtering the points to remove infinity values
+        ctrl_pts_src, ctrl_pts_dst = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched)
 
         # formulating the least square problem
-        ctrl_pts_src, ctrl_pts_dst = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched)
-        
-        from matplotlib import pyplot as plt
-        mp=ctrl_pts_2d_matched
-        cp=flipped_ctrl_pts 
-        fig,ax=plt.subplots()
-        ax.imshow(sobel_img,cmap='gray')
-        ax.scatter(mp[:,1],mp[:,0],s=5,lw=1,facecolor="none",edgecolor="blue")
-        ax.scatter(cp[:,1],cp[:,0],s=5,lw=1,facecolor="none",edgecolor="red")
-#        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst)
-        cv.waitKey(0)
+        homography_matrix = motion_estimation.motion_estimation_H(ctrl_pts_src, ctrl_pts_dst)
+        print(homography_matrix)
 
-        print('t')
-        # mat = motion_estimation.motion_estimation_F(ctrl_pts_src, ctrl_pts_dst)
-        # print(mat)
-        # print('===============')
+        # visualize results
+        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst)
+        cv.waitKey(0)
 
         # update the object pose (rotation and translation)
 

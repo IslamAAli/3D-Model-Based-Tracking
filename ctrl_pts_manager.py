@@ -114,3 +114,11 @@ def filter_ctrl_pts(src_pts, dst_pts):
             dst_pts_filtered.append(dst_pts[i, :])
 
     return src_pts_filtered, dst_pts_filtered
+
+def flip_pts(pts):
+    flipped_ctrl_pts = []
+    for i in range(pts.shape[0]):
+        flipped_ctrl_pts.append([pts[i, 1], pts[i, 0]])
+    flipped_ctrl_pts = np.asarray(flipped_ctrl_pts)
+
+    return flipped_ctrl_pts
