@@ -34,18 +34,15 @@ def main():
 #    for img_no in range(config.DATASET_SIZE):
     for img_no in range(2):   
         # read new image from the data set
-        path = 'synth_data/'+ (str(img_no+1).zfill(4)+'.png')
+        path = 'synth_data/'+ (str(img_no+2).zfill(4)+'.png')
         print('[Info] Processing image at:', path)
         img_in = cv.imread(path)
 
         # edge detection for the image
         sobel_img = edge_detection.detect_edges_sobel(img_in)
-        # cv.imshow('Object Projection', sobel_img)
-        # cv.waitKey(50)
-
-        flipped_ctrl_pts = ctrl_pts_manager.flip_pts(ctrl_pts_2d)
 
         # extraction of correspondences
+        flipped_ctrl_pts = ctrl_pts_manager.flip_pts(ctrl_pts_2d)
         flipped_matched_ctrl_pts = controlPointMatching.controlPointMatching(flipped_ctrl_pts, sobel_img, ctrl_pts_tags)
         ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
 
@@ -53,14 +50,15 @@ def main():
         ctrl_pts_src, ctrl_pts_dst = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched)
 
         # formulating the least square problem
-        homography_matrix = motion_estimation.motion_estimation_H(ctrl_pts_src, ctrl_pts_dst)
-        print(homography_matrix)
+        estimated_pose = motion_estimation.motion_estimation_H(ctrl_pts_src, ctrl_pts_dst)
+        print(estimated_pose)
 
-        # visualize results
-        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst)
+        # visualize results using visual debug module
+        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst, both=True)
         cv.waitKey(0)
 
         # update the object pose (rotation and translation)
+
 
         # plot the results
 

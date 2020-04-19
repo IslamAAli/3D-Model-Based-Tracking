@@ -12,6 +12,7 @@ def sample_edges(m_edges, m_pts_per_edge):
 
     edge_id = 0
     for edge in m_edges:
+        print(edge)
         # extract end points
         edge_start  = edge[0:3]
         edge_end    = edge[3:6]
@@ -41,7 +42,7 @@ def sample_edges(m_edges, m_pts_per_edge):
     # visual_debug.visualize_3d_scatter(ctrl_pts_3d)
 
     # visualize edges with samples
-    visual_debug.visualize_3d_lines_pts(m_edges, ctrl_pts_3d, ctrl_edge_pts_3d)
+    # visual_debug.visualize_3d_lines_pts(m_edges, ctrl_pts_3d, ctrl_edge_pts_3d)
 
     return ctrl_pts_3d, ctrl_edge_pts_3d, ctrl_pts_tags
 

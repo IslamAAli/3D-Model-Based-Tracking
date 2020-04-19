@@ -1,7 +1,7 @@
 import numpy as np
 
 # number of points to be sampled on each control edge
-CTRL_PTS_PER_EDGE   = 3
+CTRL_PTS_PER_EDGE   = 5
 DATASET_SIZE        = 800
 
 # intrinsic camera matrix parameters
