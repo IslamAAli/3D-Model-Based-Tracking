@@ -15,24 +15,18 @@ import motion_estimation
 # -----------------------------------------------------------------------------
 def main():
     print('[*] RAPiD is Starting ... ')
-    # ctrl_edges  = model_3d_manager.read_3d_model()
-    # k_mat = model_3d_manager.artificial_k_mat()
-    # rot, trans = model_3d_manager.rand_rot_trans()
 
     ctrl_edges  = model_3d_manager.model_edges()
-    k_mat       = model_3d_manager.camera_mat_gen()
-    proj_rot    = config.OBJ_R
-    proj_trans  = config.OBJ_T
-    ext_rot     = config.EXT_R
-    ext_trans   = config.EXT_T
-
     ctrl_pts_3d, edge_pts_3d, ctrl_pts_tags = ctrl_pts_manager.sample_edges(ctrl_edges, config.CTRL_PTS_PER_EDGE)
-    edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, proj_rot, proj_trans)
-    ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, proj_rot, proj_trans)
 
     # Main loop for RAPiD Tracking
 #    for img_no in range(config.DATASET_SIZE):
-    for img_no in range(2):   
+    for img_no in range(2):
+
+        # Perform 3D to 2D projection
+        edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, config.OBJ_R, config.OBJ_T)
+        ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, config.OBJ_R, config.OBJ_T)
+
         # read new image from the data set
         path = 'synth_data/'+ (str(img_no+2).zfill(4)+'.png')
         print('[Info] Processing image at:', path)
@@ -47,20 +41,22 @@ def main():
         ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
 
         # filtering the points to remove infinity values
-        ctrl_pts_src, ctrl_pts_dst = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched)
+        ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched, ctrl_pts_3d)
+
+        # tmp = ctrl_pts_src + 50
 
         # formulating the least square problem
-        estimated_pose = motion_estimation.motion_estimation_H(ctrl_pts_src, ctrl_pts_dst)
-        print(estimated_pose)
-
-        # visualize results using visual debug module
-        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst, both=True)
-        cv.waitKey(0)
+        # delta_p = motion_estimation.motion_estimation_harris(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
+        delta_p = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
+        print(delta_p)
 
         # update the object pose (rotation and translation)
+        # config.OBJ_R = np.add(config.OBJ_R, delta_p[0:3])
+        # config.OBJ_T = np.add(config.OBJ_T, delta_p[3:6])
 
-
-        # plot the results
+        # # visualize results using visual debug module
+        # visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst, both=True)
+        # cv.waitKey(0)
 
     cv.waitKey(0)
 

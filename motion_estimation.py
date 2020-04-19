@@ -26,6 +26,92 @@ def motion_estimation_H(pts_2d_src, pts_2d_dst):
     return H_mat
 
 # calculate the motion vector based on Harris RAPiD implementation
-def motion_estimation_RAPiD(pts_2d_src, pts_2d_dst, pts_3d_model):
+def motion_estimation_harris(pts_2d_src, pts_2d_dst, pts_3d_model):
 
-    return 1
+    l_init = np.subtract(pts_2d_dst, pts_2d_src)
+    l_vec  = np.zeros([2*pts_2d_src.shape[0],1])
+    w_mat  = np.zeros([2*pts_2d_src.shape[0],6])
+
+    for i in range(pts_2d_src.shape[0]):
+
+        # preparations
+        div_factor = config.OBJ_T[2] + pts_3d_model[i,2]
+
+        if div_factor == 0:
+            continue
+
+        u = pts_2d_src[i,0]
+        v = pts_2d_src[i,1]
+
+        # -- lengths vector
+        l_vec[2*i] = l_init[i,0]
+        l_vec[2*i + 1] = l_init[i,1]
+
+        # -- projection / linearized matrix
+        w_mat[2 * i, 0] = -u*pts_3d_model[i,1]
+        w_mat[2 * i, 1] = pts_3d_model[i,2] + u*pts_3d_model[i,0]
+        w_mat[2 * i, 2] = -pts_3d_model[i,1]
+        w_mat[2 * i, 3] = 1
+        w_mat[2 * i, 4] = 0
+        w_mat[2 * i, 5] = -u
+
+        w_mat[(2*i)+1, 0] = -pts_3d_model[i,2]-v*pts_3d_model[i,1]
+        w_mat[(2*i)+1, 1] = v*pts_3d_model[i,0]
+        w_mat[(2*i)+1, 2] = pts_3d_model[i,0]
+        w_mat[(2*i)+1, 3] = 0
+        w_mat[(2*i)+1, 4] = 1
+        w_mat[(2*i)+1, 5] = -v
+
+        w_mat[(2*i):(2*i+1), :] = np.divide(w_mat[(2*i):(2*i+1), :],div_factor)
+
+    delta_p, residuals, rank, s = np.linalg.lstsq(w_mat, l_vec, rcond=None)
+
+    return delta_p
+
+def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model):
+
+    delta_p = []
+
+    l_init = np.subtract(pts_2d_dst, pts_2d_src)
+    l_vec = np.zeros([2 * pts_2d_src.shape[0], 1])
+    w_mat = np.zeros([2 * pts_2d_src.shape[0], 6])
+
+    # transform point to be in camera frame (rotation only)
+    pts_3d_cam_R = np.transpose(np.dot(np.linalg.inv(config.R_MAT),np.transpose(pts_3d_model)))
+    cam_T = np.dot(-1, config.T_MAT)
+
+    for i in range(pts_2d_src.shape[0]):
+
+        # preparations
+        div_factor = cam_T[2] + pts_3d_cam_R[i,2]
+
+        if div_factor == 0:
+            continue
+
+        u = pts_2d_src[i,0]
+        v = pts_2d_src[i,1]
+
+        # -- lengths vector
+        l_vec[2*i] = l_init[i,0]
+        l_vec[2*i + 1] = l_init[i,1]
+
+        # -- projection / linearized matrix
+        w_mat[2 * i, 0] = -u*pts_3d_cam_R[i,1]
+        w_mat[2 * i, 1] = pts_3d_cam_R[i,2] + u*pts_3d_cam_R[i,0]
+        w_mat[2 * i, 2] = -pts_3d_cam_R[i,1]
+        w_mat[2 * i, 3] = 1
+        w_mat[2 * i, 4] = 0
+        w_mat[2 * i, 5] = -u
+
+        w_mat[(2*i)+1, 0] = -pts_3d_cam_R[i,2]-v*pts_3d_cam_R[i,1]
+        w_mat[(2*i)+1, 1] = v*pts_3d_cam_R[i,0]
+        w_mat[(2*i)+1, 2] = pts_3d_cam_R[i,0]
+        w_mat[(2*i)+1, 3] = 0
+        w_mat[(2*i)+1, 4] = 1
+        w_mat[(2*i)+1, 5] = -v
+
+        w_mat[(2*i):(2*i+2), :] = np.divide(w_mat[(2*i):(2*i+2), :],div_factor)
+
+    delta_p, residuals, rank, s = np.linalg.lstsq(w_mat, l_vec, rcond=None)
+
+    return delta_p

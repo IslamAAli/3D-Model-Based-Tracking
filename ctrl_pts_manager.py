@@ -12,7 +12,6 @@ def sample_edges(m_edges, m_pts_per_edge):
 
     edge_id = 0
     for edge in m_edges:
-        print(edge)
         # extract end points
         edge_start  = edge[0:3]
         edge_end    = edge[3:6]
@@ -105,16 +104,22 @@ def projection_mat_gen(m_pose_r, m_pose_t):
 
 
 # ---------------------------------------------------------------------------
-def filter_ctrl_pts(src_pts, dst_pts):
+def filter_ctrl_pts(src_pts, dst_pts, pts_3d):
     src_pts_filtered = []
     dst_pts_filtered = []
+    ctrl_pts_filtered = []
 
     for i in range(dst_pts.shape[0]):
         if (not (np.isinf(dst_pts[i,0]))) and (dst_pts[i,0]!=0):
             src_pts_filtered.append(src_pts[i, :])
             dst_pts_filtered.append(dst_pts[i, :])
+            ctrl_pts_filtered.append(pts_3d[i,:])
 
-    return src_pts_filtered, dst_pts_filtered
+    src_pts_filtered = np.asarray(src_pts_filtered)
+    dst_pts_filtered = np.asarray(dst_pts_filtered)
+    ctrl_pts_filtered = np.asarray(ctrl_pts_filtered)
+
+    return src_pts_filtered, dst_pts_filtered, ctrl_pts_filtered
 
 def flip_pts(pts):
     flipped_ctrl_pts = []
