@@ -70,17 +70,39 @@ def motion_estimation_harris(pts_2d_src, pts_2d_dst, pts_3d_model):
 
 def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model):
 
-    delta_p = []
 
-    l_init = np.subtract(pts_2d_dst, pts_2d_src)
-    l_vec = np.zeros([2 * pts_2d_src.shape[0], 1])
-    w_mat = np.zeros([2 * pts_2d_src.shape[0], 6])
+    if pts_2d_src.shape[1] == 2:
+        pts_2d_src_con = np.concatenate(pts_2d_src, np.ones([pts_2d_src.shape[0],1]), axis=0)
+        pts_2d_dst_con = np.concatenate(pts_2d_dst, np.ones([pts_2d_dst.shape[0], 1]), axis=0)
+    else:
+        pts_2d_src_con = pts_2d_src
+        pts_2d_dst_con = pts_2d_dst
+
+    # Normalize the points
+    pts_2d_src_con = np.dot(np.linalg.inv(config.K_MAT), np.transpose(pts_2d_src_con))
+    pts_2d_src_con[0, :] = np.divide(pts_2d_src_con[0, :], pts_2d_src_con[2, :])
+    pts_2d_src_con[1, :] = np.divide(pts_2d_src_con[1, :], pts_2d_src_con[2, :])
+    pts_2d_src_con[2, :] = np.divide(pts_2d_src_con[2, :], pts_2d_src_con[2, :])
+    pts_2d_src_con = np.transpose(pts_2d_src_con)
+
+    pts_2d_dst_con = np.dot(np.linalg.inv(config.K_MAT), np.transpose(pts_2d_dst_con))
+    pts_2d_dst_con[0, :] = np.divide(pts_2d_dst_con[0, :], pts_2d_dst_con[2, :])
+    pts_2d_dst_con[1, :] = np.divide(pts_2d_dst_con[1, :], pts_2d_dst_con[2, :])
+    pts_2d_dst_con[2, :] = np.divide(pts_2d_dst_con[2, :], pts_2d_dst_con[2, :])
+    pts_2d_dst_con = np.transpose(pts_2d_dst_con)
+
+    l_init = np.subtract(pts_2d_dst_con, pts_2d_src_con)
+
+
+    l_vec = np.zeros([2 * pts_2d_src_con.shape[0], 1])
+    w_mat = np.zeros([2 * pts_2d_src_con.shape[0], 6])
 
     # transform point to be in camera frame (rotation only)
-    pts_3d_cam_R = np.transpose(np.dot(np.linalg.inv(config.R_MAT),np.transpose(pts_3d_model)))
+    pts_3d_cam_R = np.transpose(np.dot((config.R_MAT),np.transpose(pts_3d_model)))
     cam_T = np.dot(-1, config.T_MAT)
+    # cam_T = np.asarray(config.T_MAT)
 
-    for i in range(pts_2d_src.shape[0]):
+    for i in range(pts_2d_src_con.shape[0]):
 
         # preparations
         div_factor = cam_T[2] + pts_3d_cam_R[i,2]
@@ -88,8 +110,8 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model):
         if div_factor == 0:
             continue
 
-        u = pts_2d_src[i,0]
-        v = pts_2d_src[i,1]
+        u = pts_2d_src_con[i,0]
+        v = pts_2d_src_con[i,1]
 
         # -- lengths vector
         l_vec[2*i] = l_init[i,0]
@@ -111,6 +133,9 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model):
         w_mat[(2*i)+1, 5] = -v
 
         w_mat[(2*i):(2*i+2), :] = np.divide(w_mat[(2*i):(2*i+2), :],div_factor)
+
+    # print(w_mat)
+    # print(l_vec)
 
     delta_p, residuals, rank, s = np.linalg.lstsq(w_mat, l_vec, rcond=None)
 
