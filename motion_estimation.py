@@ -99,8 +99,7 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model):
 
     # transform point to be in camera frame (rotation only)
     pts_3d_cam_R = np.transpose(np.dot((config.R_MAT),np.transpose(pts_3d_model)))
-    cam_T = np.dot(-1, config.T_MAT)
-    # cam_T = np.asarray(config.T_MAT)
+    cam_T = np.dot(1, config.T_MAT)
 
     for i in range(pts_2d_src_con.shape[0]):
 

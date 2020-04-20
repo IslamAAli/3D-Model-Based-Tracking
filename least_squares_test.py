@@ -16,7 +16,7 @@ points_3d = [[1, -1, -1, 1],
              [-1, 1, 1, 1],
              [-1, 1, -1, 1]]
 
-transform = np.asarray([[1,0,0,0], [0,1,0,1], [0,0,1,0], [0,0,0,1]])
+transform = np.asarray([[1,0,0,1], [0,1,0,1], [0,0,1,1], [0,0,0,1]])
 points_3d_2 = np.transpose(np.dot(transform,np.transpose(points_3d )))
 
 projection = np.dot(P_MAT, np.transpose(points_3d))
