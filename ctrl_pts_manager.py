@@ -61,8 +61,9 @@ def project_ctrl_pts(m_ctrl_pts, m_proj_pose_r, m_proj_pose_t):
     ctrl_pts_3d_hom = np.concatenate((m_ctrl_pts,ones_col), axis=1)
 
     # do the projection (euclidean projection)
-    mat_mul = np.dot(config.P_MAT, proj_mat)
-    ctrl_pts_2d_hom = np.dot( mat_mul , np.transpose(ctrl_pts_3d_hom))
+    cam_mat = config.P_MAT
+    mat_mul = np.dot(cam_mat, proj_mat)
+    ctrl_pts_2d_hom = np.dot(mat_mul , np.transpose(ctrl_pts_3d_hom))
 
     # do the scaling by the 3rd element
     ctrl_pts_2d_hom[0, :] = np.divide(ctrl_pts_2d_hom[0, :], ctrl_pts_2d_hom[2, :])

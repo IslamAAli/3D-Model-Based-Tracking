@@ -43,20 +43,17 @@ def main():
         # filtering the points to remove infinity values
         ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched, ctrl_pts_3d)
 
-        # tmp = ctrl_pts_src + 50
-
         # formulating the least square problem
-        # delta_p = motion_estimation.motion_estimation_harris(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
-        delta_p = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
-        print(delta_p)
+        delta_p, delta_t, delta_r = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
+        print(delta_t)
+        print(delta_r)
 
         # update the object pose (rotation and translation)
-        # config.OBJ_R = np.add(config.OBJ_R, delta_p[0:3])
-        # config.OBJ_T = np.add(config.OBJ_T, delta_p[3:6])
+        config.DELTA_P += delta_p
 
         # # visualize results using visual debug module
-        # visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst, both=True)
-        # cv.waitKey(0)
+        visual_debug.visualize_2d_pts_img(sobel_img, ctrl_pts_src, ctrl_pts_dst, both=True)
+        cv.waitKey(0)
 
     cv.waitKey(0)
 

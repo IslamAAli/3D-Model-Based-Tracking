@@ -75,7 +75,6 @@ def visualize_2d_pts(pts_2d):
     ax.set_ylim([0, 768])
     plt.show()
 
-
 def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
     # Create a white image
     img = np.ones((768, 1024, 3), np.float)
@@ -111,14 +110,15 @@ def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
     cv.imshow('Object Projection', img)
     cv.waitKey(0)
 
-
 def visualize_2d_pts_img(img, points_1, points_2, both=True):
 
-    if not(img == None):
-        img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
-    else:
-        img = np.ones((768, 1024, 3), np.float)
-        img = img * 255
+    # if (img == None):
+    #     img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
+    # else:
+    #     img = np.ones((768, 1024, 3), np.float)
+    #     img = img * 255
+
+    img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
 
     for point in points_1:
         cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
