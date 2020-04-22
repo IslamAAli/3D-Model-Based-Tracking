@@ -1,5 +1,5 @@
 # 3D-Model-Based-Tracking
-The main objective of the project is to achieve 3D tracking of moving objects and retrieving the 6DoF of the object motion. 
+The main objective of the project is to achieve 3D tracking of moving objects and retrieving the 6DoF of the object motion. The system is based on RAPiD 3D Tracking System devised by Harris and Stennett
 
 ## Contributors:
 Islam Ali, PhD Student, Computing Science, University of Alberta.  
