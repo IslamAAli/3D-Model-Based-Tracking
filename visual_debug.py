@@ -110,7 +110,7 @@ def visualize_3d_pts_img(pts_2d_edge, pts_2d_ctrl):
     cv.imshow('Object Projection', img)
     cv.waitKey(0)
 
-def visualize_2d_pts_img(img, points_1, points_2, both=True):
+def visualize_2d_pts_img(img, img2, points_1, points_2, both=True):
 
     # if (img == None):
     #     img = cv.cvtColor(img, cv.COLOR_GRAY2RGB)
@@ -122,10 +122,20 @@ def visualize_2d_pts_img(img, points_1, points_2, both=True):
 
     for point in points_1:
         cv.circle(img, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
+        cv.circle(img2, (int(point[0]), int(point[1])), 5, (0, 0, 255), -1)
 
     if both:
         for point in points_2:
             cv.circle(img, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
+            cv.circle(img2, (int(point[0]), int(point[1])), 5, (255, 0, 0), -1)
 
-    cv.imshow('Object Projection', img)
+
+    dashboard_img = cv.hconcat([img, img2])
+    scale_percent = 60  # percent of original size
+    width = int(dashboard_img.shape[1] * scale_percent / 100)
+    height = int(dashboard_img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    resized = cv.resize(dashboard_img, dim, interpolation=cv.INTER_AREA)
+
+    cv.imshow('Object Projection', resized)
     cv.waitKey(0)

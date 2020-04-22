@@ -59,11 +59,11 @@ def project_ctrl_pts(m_ctrl_pts, m_proj_pose_r, m_proj_pose_t):
     # convert the 3d points to be homogeneous
     ones_col =  np.ones((np.asarray(m_ctrl_pts).shape[0], 1))
     ctrl_pts_3d_hom = np.concatenate((m_ctrl_pts,ones_col), axis=1)
+    ctrl_pts_3d_proj = project_3d_points_world_frame(ctrl_pts_3d_hom)
 
     # do the projection (euclidean projection)
     cam_mat = config.P_MAT
-    mat_mul = np.dot(cam_mat, proj_mat)
-    ctrl_pts_2d_hom = np.dot(mat_mul , np.transpose(ctrl_pts_3d_hom))
+    ctrl_pts_2d_hom = np.dot(cam_mat , np.transpose(ctrl_pts_3d_proj))
 
     # do the scaling by the 3rd element
     ctrl_pts_2d_hom[0, :] = np.divide(ctrl_pts_2d_hom[0, :], ctrl_pts_2d_hom[2, :])
@@ -126,6 +126,27 @@ def flip_pts(pts):
     flipped_ctrl_pts = []
     for i in range(pts.shape[0]):
         flipped_ctrl_pts.append([pts[i, 1], pts[i, 0]])
-    flipped_ctrl_pts = np.asarray(flipped_ctrl_pts)
+    flipped_ctrl_pts = np.asarray(flipped_ctrl_pts).reshape([pts.shape[0],2])
 
     return flipped_ctrl_pts
+
+def project_3d_points_world_frame(pts_3d_hom):
+
+    # construct skew symmetric matrix
+    omega_mat = np.asarray([
+        [0, -config.OBJ_R[2], config.OBJ_R[1], config.OBJ_T[0]],
+        [config.OBJ_R[2], 0, -config.OBJ_R[0], config.OBJ_T[1]],
+        [-config.OBJ_R[1], config.OBJ_R[0], 0, config.OBJ_T[2]],
+        [0,0,0,1]
+    ])
+
+    # get the delta to be added to the points.
+    init_projection = np.dot(omega_mat, np.transpose(pts_3d_hom))
+
+    # add points to match Harris equations.
+    projected_pts = init_projection + np.transpose(pts_3d_hom)
+
+    # convert to homogeneous coordinates
+    projected_pts_hom = np.transpose(np.concatenate((projected_pts[0:3,:], np.ones([1, projected_pts.shape[1]])), axis=0))
+
+    return projected_pts_hom

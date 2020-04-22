@@ -7,11 +7,7 @@ Created on Wed Apr 15 18:52:33 2020
 """
 import math
 import numpy as np
-#<<<<<<< HEAD
-#=======
-import cv2 as cv
 
-#>>>>>>> 20b5b2cff5130c5c79abff8431e41bf3d4bf1fba
 def controlPointMatching(cp,edges,edge_tags):
     
     kx=1
