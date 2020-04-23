@@ -1,3 +1,28 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{harris1990rapid}
+C.~Harris and C.~Stennett, ``Rapid-a video rate object tracker.,'' in {\em
+  BMVC}, pp.~1--6, 1990.
+
+\bibitem{canny1986computational}
+J.~Canny, ``A computational approach to edge detection,'' {\em IEEE
+  Transactions on pattern analysis and machine intelligence}, no.~6,
+  pp.~679--698, 1986.
+
+\bibitem{Sobel1990AnI3}
+I.~Sobel and G.~Feldman, ``A 3x3 isotropic gradient operator for image
+  processing,'' {\em a talk at the Stanford Artificial Project in},
+  pp.~271--272, 1968.
+
+\bibitem{fischler1981random}
+M.~A. Fischler and R.~C. Bolles, ``Random sample consensus: a paradigm for
+  model fitting with applications to image analysis and automated
+  cartography,'' {\em Communications of the ACM}, vol.~24, no.~6, pp.~381--395,
+  1981.
+
+\bibitem{lepetit2005monocular}
+V.~Lepetit, P.~Fua, {\em et~al.}, ``Monocular model-based 3d tracking of rigid
+  objects: A survey,'' {\em Foundations and Trends{\textregistered} in Computer
+  Graphics and Vision}, vol.~1, no.~1, pp.~1--89, 2005.
 
 \end{thebibliography}

@@ -1,0 +1,21 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{6D object pose}
+ Determine the initial 6D pose of the object\;
+ Perform camera calibration (intrinsic and extrinsic)\;
+ 3D control points = sampling (high contrast 3D edges) \;
+ \While{Image Sequence Not End}{
+  2D control points = Projection of 3D points using pose info and camera calibration\;
+  sobel image = extract image edges using Sobel operator\;
+	
+	\For{Each control point}{
+		l = length from 2D projected point to closest edge\;
+		corresponding 2D point = point with shortest length to edge\;
+		Add corresponding point to correspondence vector\;
+	}  
+  Filter correspondences and keep only strong ones\;
+  $\Delta p$ = least squares on correspondences \;
+  Update object pose: $p = p+ \Delta p$\;
+ }
+ \caption{RAPiD 3D Model-Based Tracking}
+\end{algorithm}
