@@ -23,6 +23,7 @@
 \usepackage{float}
 \usepackage[ruled,vlined]{algorithm2e}
 
+\pgfplotsset{compat=1.16}
 \DeclareUnicodeCharacter{00D7}{x}
 \pagestyle{fancy}
 \fancyhf{}
@@ -60,8 +61,24 @@ Abstract Goes Here ...
 Object tracking is one of the main corner stones in a wide spectrum of robotics-related applications. This is true for both regular 2D tracking, and 3D object tracking which allow robots to perform more tasks. In this project, we study the problem of 3D Model-Based Tracking, which is tracking 3D object with the knowledge of its 3D structure in prior. We study one of the main systems that most of modern trackers are based on, which is RAPiD \cite{harris1990rapid}. We focus on the study of the system structure and how the task can be achieved, pinpointing main problems with RAPiD tracking and proposing solutions when applicable. The system will be tested on synthetic data as a starting point with the purpose of having it tested with real-world data in the near future. The main performance metric is the tracking accuracy for the time being, with plans to focus on memory and complexity aspects as the system evolves in the future.
 % ============================================================
 \section{Literature Review}
+\newpage
 \subsection{Taxonomy of 3D Tracking Systems}
+3D tracking systems can differ in a wide range of aspects and can have similarities as well. However, in order to have a high-level picture on how to classify a 3D tracking system, we needed to develop a taxonomy of such systems based on our readings from the literature. Specially, the work done in \cite{lepetit2005monocular} which highlights a wide range of systems and give a bird's eye view of their structure and principle of operation. This can also open doors to new combinations of systems and can result in more generic system that are better performing. The following diagram was developed with the for the aforementioned purpose. Such a taxonomy can provide some pointers on how to make fair comparisons between algorithms as well and how to generalize them in order to work in a wider spectrum of scenarios.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{taxonomy.png}
+\caption{Taxonomy of 3D Tracking System as Observed From the Literature}
+\end{figure}
+\newpage
 \subsection{Performance Evaluation}
+The three corner stones of evaluation of any computer-based system are:
+\begin{enumerate}
+\item Accuracy.
+\item Time Complexity.
+\item Memory Requirements.
+\end{enumerate}
+The main metric that is considered the main objective is accuracy \cite{SSDTracking} \cite{4270499} \cite{4775902}. However, we were not able to find a unified definition of accuracy when coming across tracking tasks. This stems from the fact that accuracy is hard to measure and compare across different systems where their structure differ and also their experimental setup \cite{lepetit2005monocular}. Another side objective is to enhance the time complexity of the system \cite{lepetit2005monocular} \cite{haag1999combination}, and possibly enable it to run in real-time, similar to the main objective set in RAPiD \cite{harris1990rapid}, where the real-time performance was put first, resulting in a room for accuracy enhancement for those who come after it. It worth mentioning in this context that this metric is the easiest to measure, and also to decompose w.r.t. system component.  On the other hand, we did not encounter anyone reporting the memory requirements for their system, although the great importance we have for this metric in systems deployed on limited resources platforms such as drones and small UAVs. \\
+On the other side of the spectrum, other metrics are reported in order give a better sense of the system performance or the enhancement achieved. However, in many cases the definition is loose and is not provided along the work description. One of these reported metrics is the system convergence \cite{SSDTracking}, which is defined by the time the system takes for its least squares step to converge to an acceptable residual error. This becomes important in determination of the system response time, and, in fact, is considered highly related to the time complexity metric mentioned above.
 % ============================================================
 \section{System Design}
 As mentioned earlier, the system is based on the famous 3D Model Based Real-time tracking developed by Harris et. al.\cite{harris1990rapid}. The following is a block diagram of the full system illustrating the different components and their interaction with each other. 

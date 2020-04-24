@@ -4,6 +4,33 @@
 C.~Harris and C.~Stennett, ``Rapid-a video rate object tracker.,'' in {\em
   BMVC}, pp.~1--6, 1990.
 
+\bibitem{lepetit2005monocular}
+V.~Lepetit, P.~Fua, {\em et~al.}, ``Monocular model-based 3d tracking of rigid
+  objects: A survey,'' {\em Foundations and Trends{\textregistered} in Computer
+  Graphics and Vision}, vol.~1, no.~1, pp.~1--89, 2005.
+
+\bibitem{SSDTracking}
+D.~Cobzas and M.~Jagersand, ``3d ssd tracking from uncalibrated video,'' in
+  {\em Spatial Coherence for Visual Motion Analysis} (W.~J. MacLean, ed.),
+  (Berlin, Heidelberg), pp.~25--37, Springer Berlin Heidelberg, 2006.
+
+\bibitem{4270499}
+A.~{Tyagi}, M.~{Keck}, J.~W. {Davis}, and G.~{Potamianos}, ``Kernel-based 3d
+  tracking,'' in {\em 2007 IEEE Conference on Computer Vision and Pattern
+  Recognition}, pp.~1--8, June 2007.
+
+\bibitem{4775902}
+T.~{Brox}, B.~{Rosenhahn}, J.~{Gall}, and D.~{Cremers}, ``Combined region and
+  motion-based 3d tracking of rigid and articulated objects,'' {\em IEEE
+  Transactions on Pattern Analysis and Machine Intelligence}, vol.~32,
+  pp.~402--415, March 2010.
+
+\bibitem{haag1999combination}
+M.~Haag and H.-H. Nagel, ``Combination of edge element and optical flow
+  estimates for 3d-model-based vehicle tracking in traffic image sequences,''
+  {\em International Journal of Computer Vision}, vol.~35, no.~3, pp.~295--319,
+  1999.
+
 \bibitem{canny1986computational}
 J.~Canny, ``A computational approach to edge detection,'' {\em IEEE
   Transactions on pattern analysis and machine intelligence}, no.~6,
@@ -19,10 +46,5 @@ M.~A. Fischler and R.~C. Bolles, ``Random sample consensus: a paradigm for
   model fitting with applications to image analysis and automated
   cartography,'' {\em Communications of the ACM}, vol.~24, no.~6, pp.~381--395,
   1981.
-
-\bibitem{lepetit2005monocular}
-V.~Lepetit, P.~Fua, {\em et~al.}, ``Monocular model-based 3d tracking of rigid
-  objects: A survey,'' {\em Foundations and Trends{\textregistered} in Computer
-  Graphics and Vision}, vol.~1, no.~1, pp.~1--89, 2005.
 
 \end{thebibliography}
