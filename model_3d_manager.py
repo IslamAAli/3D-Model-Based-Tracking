@@ -59,17 +59,17 @@ def model_edges():
     ctrl_edges.append([1, -2, 3, 1, -2, -3])
     ctrl_edges.append([1, -2, -3, 1, 2, -3])
     ctrl_edges.append([1, 2, -3, 1, 2, 3])
-    ctrl_edges.append([1, 2, 3, 1, -2, 3])
+    ctrl_edges.append([1, -2, 3, 1, 2, 3])
 
     ctrl_edges.append([-1, -2, 3, -1, -2, -3])
-    ctrl_edges.append([-1, -2, -3, -1, 2, -3])
-    ctrl_edges.append([-1, 2, -3, -1, 2, 3])
+    # ctrl_edges.append([-1, -2, -3, -1, 2, -3])
+    # ctrl_edges.append([-1, 2, -3, -1, 2, 3])
     ctrl_edges.append([-1, 2, 3, -1, -2, 3])
 
     ctrl_edges.append([1, -2, 3, -1, -2, 3])
     ctrl_edges.append([1, -2, -3, -1, -2, -3])
-    ctrl_edges.append([1, 2, -3, -1, 2, -3])
-    ctrl_edges.append([1, 2, 3, -1, 2, 3])
+    # ctrl_edges.append([1, 2, -3, -1, 2, -3])
+    # ctrl_edges.append([1, 2, 3, -1, 2, 3])
 
     return ctrl_edges
 
