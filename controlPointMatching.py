@@ -16,7 +16,7 @@ def controlPointMatching(cp,edges,edge_tags):
     no_of_edges = np.unique(edge_tags).shape[0]
     matchingPoints=np.zeros((cp.shape))
     k=0
-    for i in range(1,no_of_edges+1):
+    for i in range(0,no_of_edges):
         edge_control_points=cp[edge_tags==i]
         for j in range(edge_control_points.shape[0]):
             r = edge_control_points[0,:]
