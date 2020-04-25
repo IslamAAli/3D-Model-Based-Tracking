@@ -23,8 +23,8 @@ def controlPointMatching(cp,edges,edge_tags):
             s = edge_control_points[-1,:]
             temp = s-r
             dist_sr = math.sqrt(temp[1]**2+temp[0]**2)
-            cos_alpha = temp[0]/dist_sr
-            sin_alpha = temp[1]/dist_sr
+            sin_alpha = temp[0]/dist_sr
+            cos_alpha = temp[1]/dist_sr
             #Now calculating the horizontal distance
             pos1=find_Edge(edges,edge_control_points[j,:],'H')
             n1=pos1[0]-edge_control_points[j,0]
