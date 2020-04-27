@@ -27,20 +27,36 @@ def controlPointMatching(cp,edges,edge_tags):
             cos_alpha = temp[1]/dist_sr
             #Now calculating the horizontal distance
             pos1=find_Edge(edges,edge_control_points[j,:],'H')
-            n1=pos1[0]-edge_control_points[j,0]
-            l1=-1*abs(n1)*kx*sin_alpha
+            if ifRedundant(pos1,matchingPoints):
+                pos1=[np.inf,np.inf]
+                l1=np.inf
+            else:
+                n1=pos1[0]-edge_control_points[j,0]
+                l1=-1*abs(n1)*kx*sin_alpha
             #Now calculating the Vertical distance
             pos2=find_Edge(edges,edge_control_points[j,:],'V')
-            n2=pos2[1]-edge_control_points[j,1]
-            l2=abs(n2)*ky*cos_alpha
+            if ifRedundant(pos2,matchingPoints):
+                pos2=[np.inf,np.inf]
+                l2=np.inf
+            else:
+                n2=pos2[1]-edge_control_points[j,1]
+                l2=abs(n2)*ky*cos_alpha
             #Now calculating the First Diagonal distance
             pos3=find_Edge(edges,edge_control_points[j,:],'UD')
-            n3=pos3[1]-edge_control_points[j,1]
-            l3=abs(n3)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
+            if ifRedundant(pos3,matchingPoints):
+                pos3=[np.inf,np.inf]
+                l3=np.inf
+            else:
+                n3=pos3[1]-edge_control_points[j,1]
+                l3=abs(n3)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
             #Now calculating the Second Diagonal distance
             pos4=find_Edge(edges,edge_control_points[j,:],'LD')
-            n4=pos4[1]-edge_control_points[j,1]
-            l4=abs(n4)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
+            if ifRedundant(pos4,matchingPoints):
+                pos4=[np.inf,np.inf]
+                l4=np.inf
+            else:
+                n4=pos4[1]-edge_control_points[j,1]
+                l4=abs(n4)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
             dist=np.array([[pos1,pos2,pos3,pos4],[abs(l1),abs(l2),abs(l3),abs(l4)]]).T
             dist=dist[dist[:,1]==min(dist[:,1])]
             matchingPoints[k,:]=np.asarray(dist[0,0])
@@ -55,7 +71,7 @@ def find_Edge(edges,point,tag):
     pos=[x,y]
     if tag=='H':
         flag=0
-        while(flag==0 and c1<50  and c2>-50):
+        while(flag==0 and c1<100  and c2>-100):
             if(edges[x+c1,y]==255):
                 flag=1
                 c2=0
@@ -72,7 +88,7 @@ def find_Edge(edges,point,tag):
             pos=[np.inf,np.inf]
     elif tag=='V':
         flag=0
-        while(flag==0 and c1<50  and c2>-50):
+        while(flag==0 and c1<100  and c2>-100):
             if(edges[x,y+c1]==255):
                 flag=1
                 c2=0
@@ -90,7 +106,7 @@ def find_Edge(edges,point,tag):
                 
     elif tag=='UD':
         flag=0
-        while(flag==0 and c1<50  and c2>-50):
+        while(flag==0 and c1<100  and c2>-100):
             if(edges[x+c1,y+c1]==255):
                 flag=1
                 c2=0
@@ -107,7 +123,7 @@ def find_Edge(edges,point,tag):
             pos=[np.inf,np.inf]
     elif tag=='LD':
         flag=0
-        while(flag==0 and c1<50  and c2>-50):
+        while(flag==0 and c1<100  and c2>-100):
             if(edges[x+c2,y+c1]==255):
                 flag=1
                 c2=0
@@ -125,3 +141,8 @@ def find_Edge(edges,point,tag):
     else:
         print('TAG not defined')
     return pos
+
+def ifRedundant(pos,matching_points):
+    temp=matching_points==pos
+    c=temp[:,0]*temp[:,1]
+    return np.any(c == True)

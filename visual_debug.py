@@ -138,4 +138,4 @@ def visualize_2d_pts_img(img, img2, points_1, points_2, both=True):
     resized = cv.resize(dashboard_img, dim, interpolation=cv.INTER_AREA)
 
     cv.imshow('Object Projection', resized)
-    cv.waitKey(0)
+    cv.waitKey(1)

@@ -21,7 +21,7 @@ def main():
 
     # Main loop for RAPiD Tracking
     for img_no in range(config.DATASET_SIZE):
-#     for img_no in range(2):
+#    for img_no in range(2):
 
         # Perform 3D to 2D projection
         edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, config.OBJ_R, config.OBJ_T)
@@ -55,7 +55,6 @@ def main():
 
         # visualize results using visual debug module
         visual_debug.visualize_2d_pts_img(sobel_img, img_in, ctrl_pts_src, ctrl_pts_dst, both=True)
-
 
 if __name__ == "__main__":
     main()
