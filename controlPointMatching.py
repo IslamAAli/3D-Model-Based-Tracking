@@ -7,12 +7,12 @@ Created on Wed Apr 15 18:52:33 2020
 """
 import math
 import numpy as np
-
+import operator
+from matplotlib import pyplot as plt
 def controlPointMatching(cp,edges,edge_tags):
-    
     kx=1
     ky=1
-    beta=[math.atan(kx/ky), -math.atan(kx/ky)]
+    beta=[math.atan(ky/kx), -math.atan(ky/kx)]
     no_of_edges = np.unique(edge_tags).shape[0]
     matchingPoints=np.zeros((cp.shape))
     k=0
@@ -21,46 +21,58 @@ def controlPointMatching(cp,edges,edge_tags):
         for j in range(edge_control_points.shape[0]):
             r = edge_control_points[0,:]
             s = edge_control_points[-1,:]
-            temp = s-r
+            temp = abs(s-r)
             dist_sr = math.sqrt(temp[1]**2+temp[0]**2)
-            sin_alpha = temp[0]/dist_sr
-            cos_alpha = temp[1]/dist_sr
+            cos_alpha = temp[0]/dist_sr
+            sin_alpha = temp[1]/dist_sr
+            theta = math.atan(sin_alpha/cos_alpha)*(180/np.pi)
+            if theta < 0:
+                theta=180+theta
+            direction={'H':abs(90 - theta),'V':abs(90-abs(theta-90)),'UD':abs(90-abs(theta-135)),'LD':abs(90-abs(theta-45))}
+            case=min(direction.items(), key=operator.itemgetter(1))[0]
             #Now calculating the horizontal distance
-            pos1=find_Edge(edges,edge_control_points[j,:],'H')
-            if ifRedundant(pos1,matchingPoints):
-                pos1=[np.inf,np.inf]
-                l1=np.inf
-            else:
-                n1=pos1[0]-edge_control_points[j,0]
-                l1=-1*abs(n1)*kx*sin_alpha
+            if case=='H':
+                pos=find_Edge(edges,edge_control_points[j,:],'H')
+                if ifRedundant(pos,matchingPoints):
+                    pos=[np.inf,np.inf]
+                    l=np.inf
+                else:
+                    n=pos[0]-edge_control_points[j,0]
+                    l=-1*abs(n)*kx*sin_alpha
             #Now calculating the Vertical distance
-            pos2=find_Edge(edges,edge_control_points[j,:],'V')
-            if ifRedundant(pos2,matchingPoints):
-                pos2=[np.inf,np.inf]
-                l2=np.inf
-            else:
-                n2=pos2[1]-edge_control_points[j,1]
-                l2=abs(n2)*ky*cos_alpha
+            if case=='V':
+                pos=find_Edge(edges,edge_control_points[j,:],'V')
+                if ifRedundant(pos,matchingPoints):
+                    pos=[np.inf,np.inf]
+                    l=np.inf
+                else:
+                    n=pos[1]-edge_control_points[j,1]
+                    l=abs(n)*ky*cos_alpha
             #Now calculating the First Diagonal distance
-            pos3=find_Edge(edges,edge_control_points[j,:],'UD')
-            if ifRedundant(pos3,matchingPoints):
-                pos3=[np.inf,np.inf]
-                l3=np.inf
-            else:
-                n3=pos3[1]-edge_control_points[j,1]
-                l3=abs(n3)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
+            if case=='UD':
+                pos=find_Edge(edges,edge_control_points[j,:],'UD')
+                if ifRedundant(pos,matchingPoints):
+                    pos=[np.inf,np.inf]
+                    l=np.inf
+                else:
+                    n=pos[1]-edge_control_points[j,1]
+                    l=abs(n)*((ky*cos_alpha) +(math.copysign(1,n))*(kx*sin_alpha))
             #Now calculating the Second Diagonal distance
-            pos4=find_Edge(edges,edge_control_points[j,:],'LD')
-            if ifRedundant(pos4,matchingPoints):
-                pos4=[np.inf,np.inf]
-                l4=np.inf
-            else:
-                n4=pos4[1]-edge_control_points[j,1]
-                l4=abs(n4)*((ky*cos_alpha) +(math.copysign(1,n3))*(kx*sin_alpha))
-            dist=np.array([[pos1,pos2,pos3,pos4],[abs(l1),abs(l2),abs(l3),abs(l4)]]).T
-            dist=dist[dist[:,1]==min(dist[:,1])]
-            matchingPoints[k,:]=np.asarray(dist[0,0])
+            if case=='LD':
+                pos=find_Edge(edges,edge_control_points[j,:],'LD')
+                if ifRedundant(pos,matchingPoints):
+                    pos=[np.inf,np.inf]
+                    l=np.inf
+                else:
+                    n=pos[1]-edge_control_points[j,1]
+                    l=abs(n)*((ky*cos_alpha) +(math.copysign(1,n))*(kx*sin_alpha))
+            matchingPoints[k,:]=np.asarray(pos)
             k+=1
+#        fig,ax=plt.subplots()
+#        ax.imshow(edges,cmap='gray')
+#        ax.scatter(edge_control_points[:,0],edge_control_points[:,1],s=5,lw=1,facecolor="none",edgecolor="red")
+#        ax.scatter(matchingPoints[:,0],matchingPoints[:,1],s=5,lw=1,facecolor="none",edgecolor="blue")
+
     return matchingPoints
 
 def find_Edge(edges,point,tag):
@@ -72,12 +84,12 @@ def find_Edge(edges,point,tag):
     if tag=='H':
         flag=0
         while(flag==0 and c1<100  and c2>-100):
-            if(edges[x+c1,y]==255):
+            if(edges[y,x+c1]==255):
                 flag=1
                 c2=0
                 pos=[x+c1,y]
                 break
-            elif(edges[x+c2,y]==255):
+            elif(edges[y,x+c2]==255):
                 flag=1
                 c1=0
                 pos=[x+c2,y]
@@ -89,12 +101,12 @@ def find_Edge(edges,point,tag):
     elif tag=='V':
         flag=0
         while(flag==0 and c1<100  and c2>-100):
-            if(edges[x,y+c1]==255):
+            if(edges[y+c1,x]==255):
                 flag=1
                 c2=0
                 pos=[x,y+c1]
                 break
-            elif(edges[x,y+c2]==255):
+            elif(edges[y+c2,x]==255):
                 flag=1
                 c1=0
                 pos=[x,y+c2]
@@ -107,12 +119,12 @@ def find_Edge(edges,point,tag):
     elif tag=='UD':
         flag=0
         while(flag==0 and c1<100  and c2>-100):
-            if(edges[x+c1,y+c1]==255):
+            if(edges[y+c1,x+c1]==255):
                 flag=1
                 c2=0
                 pos=[x+c1,y+c1]
                 break
-            elif(edges[x+c2,y+c2]==255):
+            elif(edges[y+c2,x+c2]==255):
                 flag=1
                 c1=0
                 pos=[x+c2,y+c2]
@@ -124,15 +136,15 @@ def find_Edge(edges,point,tag):
     elif tag=='LD':
         flag=0
         while(flag==0 and c1<100  and c2>-100):
-            if(edges[x+c2,y+c1]==255):
+            if(edges[y+c1,x+c2]==255):
                 flag=1
                 c2=0
                 pos=[x+c2,y+c1]
                 break
-            elif(edges[x+c2,y+c2]==255):
+            elif(edges[y+c2,x+c2]==255):
                 flag=1
                 c1=0
-                pos=[x+c1,y+c2]
+                pos=[x+c2,y+c2]
                 break
             else:
                 c1+=1
