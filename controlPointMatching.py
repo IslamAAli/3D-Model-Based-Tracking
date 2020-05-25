@@ -15,6 +15,8 @@ def controlPointMatching(cp,edges,edge_tags):
     beta=[math.atan(ky/kx), -math.atan(ky/kx)]
     no_of_edges = np.unique(edge_tags).shape[0]
     matchingPoints=np.zeros((cp.shape))
+#    l_vec=np.zeros((cp.shape[0],1))
+    normal=np.zeros((2*cp.shape[0],1))
     k=0
     for i in range(0,no_of_edges):
         edge_control_points=cp[edge_tags==i]
@@ -67,13 +69,16 @@ def controlPointMatching(cp,edges,edge_tags):
                     n=pos[1]-edge_control_points[j,1]
                     l=abs(n)*((ky*cos_alpha) +(math.copysign(1,n))*(kx*sin_alpha))
             matchingPoints[k,:]=np.asarray(pos)
+#            l_vec[k]=np.linalg.norm(edge_control_points[j,:]-matchingPoints[k,:])
+            normal[2*k,:]=sin_alpha
+            normal[2*k+1,:]=-1*cos_alpha
             k+=1
 #        fig,ax=plt.subplots()
 #        ax.imshow(edges,cmap='gray')
 #        ax.scatter(edge_control_points[:,0],edge_control_points[:,1],s=5,lw=1,facecolor="none",edgecolor="red")
 #        ax.scatter(matchingPoints[:,0],matchingPoints[:,1],s=5,lw=1,facecolor="none",edgecolor="blue")
 
-    return matchingPoints
+    return matchingPoints,normal
 
 def find_Edge(edges,point,tag):
     x=int(point[0])

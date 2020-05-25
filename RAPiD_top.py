@@ -36,15 +36,14 @@ def main():
         sobel_img = edge_detection.detect_edges_sobel(img_in)
 
         # extraction of correspondences
-        flipped_ctrl_pts = ctrl_pts_manager.flip_pts(ctrl_pts_2d)
-        ctrl_pts_2d_matched = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
+        ctrl_pts_2d_matched,normal = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
 #        ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
 
         # filtering the points to remove infinity values
         ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched, ctrl_pts_3d)
 
         # formulating the least square problem
-        delta_p, delta_t, delta_r = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered)
+        delta_p, delta_t, delta_r = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered,normal)
         print(delta_t)
         print(delta_r)
 
@@ -54,7 +53,7 @@ def main():
         config.OBJ_R += delta_r
 
         # visualize results using visual debug module
-#        visual_debug.visualize_2d_pts_img(sobel_img, img_in, ctrl_pts_src, ctrl_pts_dst, both=True)
+        visual_debug.visualize_2d_pts_img(sobel_img, img_in, ctrl_pts_src, ctrl_pts_dst, both=True)
 
 if __name__ == "__main__":
     main()
