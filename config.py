@@ -32,13 +32,13 @@ RT_MAT_33  = [  [0.6859,     0.7277,    0,          -1.3140],
 R_MAT = [[0.6859, 0.7277, 0],
         [0.3240, -0.3054, -0.8954],
         [-0.6516, 0.6142, -0.4453]]
-T_MAT = [[-1.3140],[-1.6171],[41.3372]]
+
 
 OBJ_POSE    = np.identity(4)
 OBJ_R       = np.zeros([3,1])
 OBJ_T       = np.zeros([3,1])
 DELTA_P     = np.zeros([6,1])
-
+T_MAT = [[-1.3140],[-1.6171],[41.3372]]
 # rotation and translation randomization limits
 RAND_ROT_LIMIT      = 10
 RAND_TRANS_LIMIT    = 5

@@ -24,34 +24,46 @@ def main():
 #    for img_no in range(2):
 
         # Perform 3D to 2D projection
+        iter = 0
         edge_pts_2d = ctrl_pts_manager.project_ctrl_pts(edge_pts_3d, config.OBJ_R, config.OBJ_T)
         ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, config.OBJ_R, config.OBJ_T)
-
+    
         # read new image from the data set
         path = 'synth_data/'+ (str(img_no+2).zfill(4)+'.png')
         print('[Info] Processing image at:', path)
         img_in = cv.imread(path)
-
+    
         # edge detection for the image
         sobel_img = edge_detection.detect_edges_sobel(img_in)
-
+    
         # extraction of correspondences
         ctrl_pts_2d_matched,normal = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
-#        ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
-
-        # filtering the points to remove infinity values
+         #        ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
+    
+            # filtering the points to remove infinity values
         ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched, ctrl_pts_3d)
-
-        # formulating the least square problem
-        delta_p, delta_t, delta_r = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered,normal)
-        print(delta_t)
-        print(delta_r)
-
-        # update the object pose (rotation and translation)
-        config.DELTA_P += delta_p
-        config.OBJ_T += delta_t
-        config.OBJ_R += delta_r
-
+    
+        while iter<=7:
+            
+   
+            # formulating the least square problem
+            delta_p, delta_t, delta_r = motion_estimation.motion_estimation_harris_enhanced(ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered,normal)
+            print(delta_t)
+            print(delta_r)
+    
+            # update the object pose (rotation and translation)
+            config.DELTA_P += delta_p
+            config.OBJ_T += delta_t
+            config.OBJ_R += delta_r
+            # config.T_MAT+=delta_t
+            ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, config.OBJ_R, config.OBJ_T)
+            ctrl_pts_2d_matched,normal = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)
+         #        ctrl_pts_2d_matched = ctrl_pts_manager.flip_pts(flipped_matched_ctrl_pts)
+    
+            # filtering the points to remove infinity values
+            ctrl_pts_src, ctrl_pts_dst, ctrl_pts_3d_filtered = ctrl_pts_manager.filter_ctrl_pts(ctrl_pts_2d, ctrl_pts_2d_matched, ctrl_pts_3d)
+    
+            iter +=1
         # visualize results using visual debug module
         visual_debug.visualize_2d_pts_img(sobel_img, img_in, ctrl_pts_src, ctrl_pts_dst, both=True)
 

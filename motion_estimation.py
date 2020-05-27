@@ -76,11 +76,18 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
     else:
         pts_2d_src_con = pts_2d_src
         pts_2d_dst_con = pts_2d_dst
-
+    k=np.zeros((2,pts_3d_model.shape[0]))
+    
+    
+   # transform point to be in camera frame (rotation only)
+    pts_3d_cam_R = np.transpose(np.dot((config.R_MAT),np.transpose(pts_3d_model)))
+    cam_T = np.dot(1, config.T_MAT)
 #     Normalize the points
     pts_2d_src_con = np.dot(np.linalg.inv(config.K_MAT), np.transpose(pts_2d_src_con))
-    pts_2d_src_con[0, :] = np.divide(pts_2d_src_con[0, :], pts_2d_src_con[2, :])
-    pts_2d_src_con[1, :] = np.divide(pts_2d_src_con[1, :], pts_2d_src_con[2, :])
+    k[0,:]=np.divide(np.divide(pts_3d_cam_R[:,0]+cam_T[0],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[0,:])
+    k[1,:]=np.divide(np.divide(pts_3d_cam_R[:,1]+cam_T[1],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[1,:]) 
+    # pts_2d_src_con[0, :] = np.multiply(pts_2d_src_con[0,:],k[0,:])
+    # pts_2d_src_con[1, :] = np.multiply(pts_2d_src_con[1,:],k[1,:])
     pts_2d_src_con[2, :] = np.divide(pts_2d_src_con[2, :], pts_2d_src_con[2, :])
     pts_2d_src_con = np.transpose(pts_2d_src_con)
 #    c1=np.mean(pts_2d_src_con[:,0])
@@ -91,13 +98,12 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
 #    sv=1/(np.std(ynew))
 #    Tform=np.dot(np.array([[su,0,0],[0,sv,0],[0,0,1]]),np.array([[1,0,-c1],[0,1,-c2],[0,0,1]]))
 #    pts_2d_src_con=np.dot(Tform,pts_2d_src_con.T).T
-    
     pts_2d_dst_con = np.dot(np.linalg.inv(config.K_MAT), np.transpose(pts_2d_dst_con))
-    pts_2d_dst_con[0, :] = np.divide(pts_2d_dst_con[0, :], pts_2d_dst_con[2, :])
-    pts_2d_dst_con[1, :] = np.divide(pts_2d_dst_con[1, :], pts_2d_dst_con[2, :])
+    # pts_2d_dst_con[0, :] = np.multiply(pts_2d_dst_con[0,:],k[0,:])
+    # pts_2d_dst_con[1, :] = np.multiply(pts_2d_dst_con[1,:],k[1,:])
     pts_2d_dst_con[2, :] = np.divide(pts_2d_dst_con[2, :], pts_2d_dst_con[2, :])
     pts_2d_dst_con = np.transpose(pts_2d_dst_con)
-##    c1=np.mean(pts_2d_dst_con[:,0])
+#    c1=np.mean(pts_2d_dst_con[:,0])
 #    c2=np.mean(pts_2d_dst_con[:,1])
 #    xnew=pts_2d_dst_con[:,0]-c1
 #    ynew=pts_2d_dst_con[:,1]-c2
@@ -109,12 +115,12 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
     l_init = np.subtract(pts_2d_dst_con, pts_2d_src_con)
 
 
-    l_vec = np.zeros([pts_2d_src_con.shape[0], 1])
+    l_vec = np.zeros([2*pts_2d_src_con.shape[0], 1])
+    # l_vec = np.zeros([pts_2d_src_con.shape[0], 1])
     w_mat = np.zeros([2 * pts_2d_src_con.shape[0], 6])
 
-    # transform point to be in camera frame (rotation only)
-    pts_3d_cam_R = np.transpose(np.dot((config.R_MAT),np.transpose(pts_3d_model)))
-    cam_T = np.dot(1, config.T_MAT)
+ 
+ 
     c=np.zeros((pts_2d_src.shape[0],6))
 
     for i in range(pts_2d_src_con.shape[0]):
@@ -125,13 +131,15 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
         if div_factor == 0:
             continue
 
-        u = pts_2d_src_con[i,0]
-        v = pts_2d_src_con[i,1]
+        u = np.divide((pts_3d_cam_R[i,0]+cam_T[0]),div_factor)
+        v = np.divide((pts_3d_cam_R[i,1]+cam_T[1]),div_factor)
+        # u=pts_2d_src_con[i,0]
+        # v=pts_2d_src_con[i,1]
 
         # -- lengths vector
-        l_vec[i]=(normal[2*i]*l_init[i,0] +normal[2*i+1]*l_init[i,1])
-#       l_vec[2*i] = l_init[i,0]
-#       l_vec[2*i + 1] = l_init[i,1]
+        # l_vec[i]=(normal[2*i]*l_init[i,0]) + (normal[2*i + 1]*l_init[i,1])
+        l_vec[2*i] = l_init[i,0]
+        l_vec[2*i + 1] = l_init[i,1]
 
         # -- projection / linearized matrix
         w_mat[2 * i, 0] = -u*pts_3d_cam_R[i,1]
@@ -149,12 +157,13 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
         w_mat[(2*i)+1, 5] = -v
 
         w_mat[(2*i):(2*i+2), :] = np.divide(w_mat[(2*i):(2*i+2), :],div_factor)
-        c[i,:]=(normal[2*i]*w_mat[2*i,:] + normal[2*i+1]*w_mat[2*i+1,:])
+        # c[i,:]=(normal[2*i]*w_mat[2*i,:] + normal[2*i+1]*w_mat[2*i+1,:])
         
-    A = np.dot(c.T,c)
-    y=-1*np.dot(c.T,l_vec)
-    delta_p, residuals, rank, s = np.linalg.lstsq(A, y, rcond=None)
-    error = l_vec + np.dot(c,delta_p)
+    # A = np.dot(c.T,c)
+    # y=-1*np.dot(c.T,l_vec)
+    delta_p, residuals, rank, s = np.linalg.lstsq(w_mat, l_vec, rcond=None)
+    # delta_p, residuals, rank, s = np.linalg.lstsq(A, y, rcond=None)
+    # error = l_vec + np.dot(c,delta_p)
     delta_t = np.dot(np.linalg.inv(config.R_MAT), delta_p[3:6])
     delta_r = np.dot(np.linalg.inv(config.R_MAT), delta_p[0:3])
 
