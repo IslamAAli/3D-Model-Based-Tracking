@@ -55,6 +55,12 @@ def main():
             config.DELTA_P += delta_p
             config.OBJ_T += delta_t
             config.OBJ_R += delta_r
+            if config.attitude_mat[3,3]==0:
+                config.attitude_mat=config.attitude(delta_r, [0,0,0])
+            else:
+                phi=config.attitude(delta_r, [0,0,0])
+                config.attitude_mat=phi*config.attitude_mat
+                config.attitude_mat[0:3,3]=config.OBJ_T.reshape(3,)
             # config.T_MAT+=delta_t
             ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, config.OBJ_R, config.OBJ_T)
             ctrl_pts_2d_matched,normal = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)

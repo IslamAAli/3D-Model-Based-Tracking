@@ -39,6 +39,17 @@ OBJ_R       = np.zeros([3,1])
 OBJ_T       = np.zeros([3,1])
 DELTA_P     = np.zeros([6,1])
 T_MAT = [[-1.3140],[-1.6171],[41.3372]]
+attitude_mat = np.zeros([4,4])
+def attitude(OBJ_R,OBJ_T):
+    attitude_mat = np.asarray([
+        [0, -OBJ_R[2], OBJ_R[1], OBJ_T[0]],
+        [OBJ_R[2], 0, -OBJ_R[0], OBJ_T[1]],
+        [-OBJ_R[1], OBJ_R[0], 0, OBJ_T[2]],
+        [0,0,0,1]
+    ])
+    return attitude_mat
+
+
 # rotation and translation randomization limits
 RAND_ROT_LIMIT      = 10
 RAND_TRANS_LIMIT    = 5

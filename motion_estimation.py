@@ -84,8 +84,8 @@ def motion_estimation_harris_enhanced(pts_2d_src, pts_2d_dst, pts_3d_model,norma
     cam_T = np.dot(1, config.T_MAT)
 #     Normalize the points
     pts_2d_src_con = np.dot(np.linalg.inv(config.K_MAT), np.transpose(pts_2d_src_con))
-    k[0,:]=np.divide(np.divide(pts_3d_cam_R[:,0]+cam_T[0],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[0,:])
-    k[1,:]=np.divide(np.divide(pts_3d_cam_R[:,1]+cam_T[1],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[1,:]) 
+    # k[0,:]=np.divide(np.divide(pts_3d_cam_R[:,0]+cam_T[0],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[0,:])
+    # k[1,:]=np.divide(np.divide(pts_3d_cam_R[:,1]+cam_T[1],pts_3d_cam_R[:,2]+cam_T[2]).T,pts_2d_src_con[1,:]) 
     # pts_2d_src_con[0, :] = np.multiply(pts_2d_src_con[0,:],k[0,:])
     # pts_2d_src_con[1, :] = np.multiply(pts_2d_src_con[1,:],k[1,:])
     pts_2d_src_con[2, :] = np.divide(pts_2d_src_con[2, :], pts_2d_src_con[2, :])

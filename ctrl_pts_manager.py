@@ -141,7 +141,7 @@ def project_3d_points_world_frame(pts_3d_hom):
     ])
 
     # get the delta to be added to the points.
-    init_projection = np.dot(omega_mat, np.transpose(pts_3d_hom))
+    init_projection = np.dot(config.attitude_mat, np.transpose(pts_3d_hom))
 
     # add points to match Harris equations.
     projected_pts = init_projection + np.transpose(pts_3d_hom)
