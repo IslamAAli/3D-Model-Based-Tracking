@@ -39,6 +39,44 @@ OBJ_R       = np.zeros([3,1])
 OBJ_T       = np.zeros([3,1])
 DELTA_P     = np.zeros([6,1])
 T_MAT = [[-1.3140],[-1.6171],[41.3372]]
+Quat = np.asarray([1,0,0])
+
+def to_quaternion(delta_r):
+    alpha=np.linalg.norm(delta_r)
+    if(alpha!=0):
+        v=np.divide(delta_r,alpha)
+    else:
+        v=[0,0,0]
+    q=np.asarray([np.cos(0.5*alpha),v[0]*np.sin(0.5*alpha),v[1]*np.sin(0.5*alpha),v[2]*np.sin(0.5*alpha)])
+    return q
+
+def update_quaternion(q1,q2):
+    a1=q1[0]
+    a2=q2[0]
+    b1=q1[1]
+    b2=q2[1]
+    c1=q1[2]
+    c2=q2[2]
+    d1=q1[3]
+    d2=q2[3]
+    q=np.asarray([(a1*a2) - (b1*b2) - (c1*c2) - (d1*d2),
+                  (a1*b2) + (b1*a2) + (c1*d2) - (d1*c2),
+                  (a1*c2) - (b1*d2) + (c1*a2) + (d1*b2),
+                  (a1*d2) + (b1*c2) - (c1*b2) + (d1*a2)
+        ])
+    alpha=2*np.arccos(q[0])
+    sin=np.sqrt(1-(q[0]**2))
+    if (sin < 0.001):
+        dx=q[1]
+        dy=q[2]
+        dz=q[3]
+    else:
+        dx=q[1]/sin
+        dy=q[2]/sin
+        dz=q[3]/sin
+    angles = np.multiply([dx,dy,dz],alpha)
+    return angles
+
 attitude_mat = np.zeros([4,4])
 def attitude(OBJ_R,OBJ_T):
     attitude_mat = np.asarray([

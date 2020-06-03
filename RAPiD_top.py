@@ -20,7 +20,7 @@ def main():
     ctrl_pts_3d, edge_pts_3d, ctrl_pts_tags = ctrl_pts_manager.sample_edges(ctrl_edges, config.CTRL_PTS_PER_EDGE)
 
     # Main loop for RAPiD Tracking
-    for img_no in range(config.DATASET_SIZE):
+    for img_no in range(200,config.DATASET_SIZE):
 #    for img_no in range(2):
 
         # Perform 3D to 2D projection
@@ -54,13 +54,17 @@ def main():
             # update the object pose (rotation and translation)
             config.DELTA_P += delta_p
             config.OBJ_T += delta_t
-            config.OBJ_R += delta_r
-            if config.attitude_mat[3,3]==0:
-                config.attitude_mat=config.attitude(delta_r, [0,0,0])
-            else:
-                phi=config.attitude(delta_r, [0,0,0])
-                config.attitude_mat=phi*config.attitude_mat
-                config.attitude_mat[0:3,3]=config.OBJ_T.reshape(3,)
+            q1 = config.to_quaternion(config.OBJ_R)
+            q2 = config.to_quaternion(delta_r)
+            config.OBJ_R= config.update_quaternion(q1, q2)
+            # config.OBJ_R += delta_r
+            
+            # if config.attitude_mat[3,3]==0:
+            #     config.attitude_mat=config.attitude(delta_r, [0,0,0])
+            # else:
+            #     phi=config.attitude(delta_r, [0,0,0])
+            #     config.attitude_mat=phi*config.attitude_mat
+            #     config.attitude_mat[0:3,3]=config.OBJ_T.reshape(3,)
             # config.T_MAT+=delta_t
             ctrl_pts_2d = ctrl_pts_manager.project_ctrl_pts(ctrl_pts_3d, config.OBJ_R, config.OBJ_T)
             ctrl_pts_2d_matched,normal = controlPointMatching.controlPointMatching(ctrl_pts_2d, sobel_img, ctrl_pts_tags)

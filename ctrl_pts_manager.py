@@ -59,11 +59,12 @@ def project_ctrl_pts(m_ctrl_pts, m_proj_pose_r, m_proj_pose_t):
     # convert the 3d points to be homogeneous
     ones_col =  np.ones((np.asarray(m_ctrl_pts).shape[0], 1))
     ctrl_pts_3d_hom = np.concatenate((m_ctrl_pts,ones_col), axis=1)
-    ctrl_pts_3d_proj = project_3d_points_world_frame(ctrl_pts_3d_hom)
+    # ctrl_pts_3d_proj = project_3d_points_world_frame(ctrl_pts_3d_hom)
+    ctrl_pts_3d_proj = np.dot(proj_mat,ctrl_pts_3d_hom.T)
 
     # do the projection (euclidean projection)
     cam_mat = config.P_MAT
-    ctrl_pts_2d_hom = np.dot(cam_mat , np.transpose(ctrl_pts_3d_proj))
+    ctrl_pts_2d_hom = np.dot(cam_mat , np.transpose(ctrl_pts_3d_proj.T))
 
     # do the scaling by the 3rd element
     ctrl_pts_2d_hom[0, :] = np.divide(ctrl_pts_2d_hom[0, :], ctrl_pts_2d_hom[2, :])
@@ -77,9 +78,9 @@ def project_ctrl_pts(m_ctrl_pts, m_proj_pose_r, m_proj_pose_t):
 # ---------------------------------------------------------------------------
 def projection_mat_gen(m_pose_r, m_pose_t):
     # convert angles to radians and get the sin/cos values
-    pose_r_radian = np.deg2rad(m_pose_r)
-    pose_r_sin = np.sin(pose_r_radian)
-    pose_r_cos = np.cos(pose_r_radian)
+    # pose_r_radian = np.deg2rad(m_pose_r)
+    pose_r_sin = np.sin(m_pose_r)
+    pose_r_cos = np.cos(m_pose_r)
 
     # constructing the rotation matrix
     rz = [[pose_r_cos[2], -pose_r_sin[2], 0],
@@ -141,7 +142,7 @@ def project_3d_points_world_frame(pts_3d_hom):
     ])
 
     # get the delta to be added to the points.
-    init_projection = np.dot(config.attitude_mat, np.transpose(pts_3d_hom))
+    init_projection = np.dot(omega_mat, np.transpose(pts_3d_hom))
 
     # add points to match Harris equations.
     projected_pts = init_projection + np.transpose(pts_3d_hom)
